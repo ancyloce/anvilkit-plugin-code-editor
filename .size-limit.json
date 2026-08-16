@@ -1,0 +1,31 @@
+[
+	{
+		"name": "@anvilkit/plugin-code-editor entry",
+		"path": "dist/index.js",
+		"limit": "15 KB",
+		"gzip": true,
+		"ignore": [
+			"react",
+			"react-dom",
+			"@puckeditor/core",
+			"@anvilkit/core",
+			"@codemirror/state",
+			"@codemirror/view",
+			"@codemirror/lint",
+			"@codemirror/lang-javascript",
+			"zod"
+		]
+	},
+	{
+		"name": "@anvilkit/plugin-code-editor codemirror chunk (lazy)",
+		"path": "dist/react/editor-binding.js",
+		"limit": "150 KB",
+		"gzip": true,
+		"ignore": [
+			"react",
+			"react-dom",
+			"@puckeditor/core",
+			"@anvilkit/core"
+		]
+	}
+]

@@ -1,0 +1,100 @@
+{
+	"name": "@anvilkit/plugin-code-editor",
+	"version": "0.1.0",
+	"description": "Edit the Puck document as code (JSON now, TSX later) inside AnvilKit Studio, committing through the single-commit protocol.",
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"require": {
+				"types": "./dist/cjs/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
+		}
+	},
+	"files": [
+		"dist",
+		"meta",
+		"i18n"
+	],
+	"license": "MIT",
+	"engines": {
+		"node": ">=18"
+	},
+	"packageManager": "pnpm@11.20.0",
+	"scripts": {
+		"build": "rslib build --lib esm && rslib build --lib cjs --no-clean",
+		"dev": "rslib build --watch",
+		"lint": "pnpm exec biome lint package.json tsconfig.json rslib.config.ts vitest.config.ts src",
+		"format": "pnpm exec biome check --write package.json tsconfig.json rslib.config.ts vitest.config.ts src",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"publint": "publint",
+		"check:publint": "publint",
+		"check:circular": "madge --circular --extensions ts,tsx src/",
+		"check:peer-deps": "node ./scripts/check-peer-deps.mjs",
+		"check:all": "pnpm check:publint && pnpm check:circular && pnpm check:peer-deps && pnpm check:bundle-budget",
+		"size": "size-limit",
+		"check:bundle-budget": "size-limit"
+	},
+	"peerDependencies": {
+		"@puckeditor/core": "^0.23.0",
+		"react": ">=19.0.0",
+		"react-dom": ">=19.0.0",
+		"zod": "^4.4.3"
+	},
+	"peerDependenciesMeta": {
+		"@puckeditor/core": {
+			"optional": false
+		},
+		"react": {
+			"optional": false
+		},
+		"react-dom": {
+			"optional": false
+		},
+		"zod": {
+			"optional": false
+		}
+	},
+	"dependencies": {
+		"@anvilkit/core": "workspace:*",
+		"@codemirror/lang-javascript": "^6.2.4",
+		"@codemirror/lint": "^6.8.5",
+		"@codemirror/state": "^6.5.2",
+		"@codemirror/view": "^6.38.1",
+		"jsonrepair": "^3.15.0"
+	},
+	"devDependencies": {
+		"@anvilkit/biome-config": "workspace:*",
+		"@anvilkit/core": "workspace:*",
+		"@anvilkit/typescript-config": "workspace:*",
+		"@anvilkit/vitest-config": "workspace:*",
+		"@puckeditor/core": "^0.23.0",
+		"@rsbuild/plugin-react": "^2.1.0",
+		"@rslib/core": "^0.23.2",
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.2",
+		"@types/node": "^26.2.0",
+		"@types/react": "^19.2.18",
+		"@types/react-dom": "19.2.4",
+		"jsdom": "^30.0.1",
+		"madge": "^8.0.0",
+		"publint": "^0.3.23",
+		"react": "^19.2.8",
+		"react-dom": "^19.2.8",
+		"typescript": "7.0.2",
+		"vitest": "^4.1.10",
+		"zod": "^4.4.3"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

@@ -1,0 +1,25 @@
+{
+	"extends": "@anvilkit/typescript-config/react-library.json",
+	"compilerOptions": {
+		"ignoreDeprecations": "6.0",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"outDir": "dist",
+		"rootDir": "src",
+		"resolveJsonModule": true,
+		"strictNullChecks": true,
+		"useDefineForClassFields": true,
+		"verbatimModuleSyntax": true
+	},
+	"include": ["src/**/*.ts", "src/**/*.tsx", "i18n/**/*.json"],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"src/**/*.test.ts",
+		"src/**/*.test.tsx",
+		"src/**/*.spec.ts",
+		"src/**/*.spec.tsx",
+		"src/**/__tests__/**"
+	]
+}

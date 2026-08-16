@@ -1,0 +1,8 @@
+{
+	"id": "anvilkit-plugin-code-editor",
+	"name": "Code Editor",
+	"version": "0.1.0",
+	"coreVersion": "^0.1.0-alpha",
+	"description": "Edit the Puck document as code. REQUIRES the visual editor (`editor.features.enabled`); no-ops with a logged warning when `ctx.editor` is absent.",
+	"capabilities": { "header": true }
+}

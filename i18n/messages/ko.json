@@ -1,0 +1,12 @@
+{
+	"codeEditor.toggle": "코드",
+	"codeEditor.panel.title": "코드",
+	"codeEditor.panel.unavailable": "이 마운트에서는 비주얼 에디터가 활성화되지 않았습니다.",
+	"codeEditor.projection.json": "JSON",
+	"codeEditor.projection.tsx": "TSX",
+	"codeEditor.status.clean": "동기화됨",
+	"codeEditor.status.dirty": "저장되지 않은 변경",
+	"codeEditor.status.invalid": "유효하지 않은 문서",
+	"codeEditor.projection.label": "보기",
+	"codeEditor.projection.readOnly": "문서의 읽기 전용 보기"
+}

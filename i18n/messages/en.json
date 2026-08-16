@@ -1,0 +1,12 @@
+{
+	"codeEditor.toggle": "Code",
+	"codeEditor.panel.title": "Code",
+	"codeEditor.panel.unavailable": "The visual editor is not enabled for this mount.",
+	"codeEditor.projection.json": "JSON",
+	"codeEditor.projection.tsx": "TSX",
+	"codeEditor.status.clean": "Synced",
+	"codeEditor.status.dirty": "Unsaved edits",
+	"codeEditor.status.invalid": "Invalid document",
+	"codeEditor.projection.label": "Projection",
+	"codeEditor.projection.readOnly": "Read-only view of the document"
+}

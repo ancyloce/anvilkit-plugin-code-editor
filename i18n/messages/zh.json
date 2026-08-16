@@ -1,0 +1,12 @@
+{
+	"codeEditor.toggle": "代码",
+	"codeEditor.panel.title": "代码",
+	"codeEditor.panel.unavailable": "此挂载未启用可视化编辑器。",
+	"codeEditor.projection.json": "JSON",
+	"codeEditor.projection.tsx": "TSX",
+	"codeEditor.status.clean": "已同步",
+	"codeEditor.status.dirty": "有未保存的修改",
+	"codeEditor.status.invalid": "文档无效",
+	"codeEditor.projection.label": "视图",
+	"codeEditor.projection.readOnly": "文档的只读视图"
+}

@@ -1,0 +1,12 @@
+{
+	"codeEditor.toggle": "コード",
+	"codeEditor.panel.title": "コード",
+	"codeEditor.panel.unavailable": "このマウントではビジュアルエディターが有効になっていません。",
+	"codeEditor.projection.json": "JSON",
+	"codeEditor.projection.tsx": "TSX",
+	"codeEditor.status.clean": "同期済み",
+	"codeEditor.status.dirty": "未保存の変更",
+	"codeEditor.status.invalid": "ドキュメントが無効です",
+	"codeEditor.projection.label": "ビュー",
+	"codeEditor.projection.readOnly": "ドキュメントの読み取り専用ビュー"
+}

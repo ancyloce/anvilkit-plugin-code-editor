@@ -27,7 +27,7 @@
 	"engines": {
 		"node": ">=18"
 	},
-	"packageManager": "pnpm@11.20.0",
+	"packageManager": "pnpm@11.22.0",
 	"scripts": {
 		"build": "rslib build --lib esm && rslib build --lib cjs --no-clean",
 		"dev": "rslib build --watch",
@@ -80,7 +80,7 @@
 		"@puckeditor/core": "^0.23.0",
 		"@rsbuild/plugin-react": "^2.1.0",
 		"@rslib/core": "^0.23.2",
-		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.2",
 		"@types/node": "^26.2.0",
 		"@types/react": "^19.2.18",

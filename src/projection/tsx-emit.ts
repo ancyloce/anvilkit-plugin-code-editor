@@ -89,9 +89,14 @@ function literal(value: unknown): string {
 
 /** One `name="…"` / `name={…}` attribute segment. */
 function attribute(name: string, value: unknown): string {
-	return typeof value === "string"
-		? `${name}=${JSON.stringify(value)}`
-		: `${name}={${literal(value)}}`;
+	if (typeof value !== "string") return `${name}={${literal(value)}}`;
+	// JSX quoted attributes do not implement JavaScript string escapes:
+	// `label="a\\"b"` terminates at the quote and `"a\\nb"` parses as the
+	// two characters backslash+n. Keep the readable canonical form for safe
+	// text, and use a brace-wrapped JS literal whenever escaping is required.
+	return /["\\\r\n\t]/.test(value)
+		? `${name}={${JSON.stringify(value)}}`
+		: `${name}=${JSON.stringify(value)}`;
 }
 
 /** `<Type.slot>` … `</Type.slot>` around already-rendered children. */
@@ -136,12 +141,11 @@ function renderNode(node: PuckNode, config: Config, depth: number): string {
 			continue;
 		}
 
-		// OPEN-1 (DOC-01 §9): slots nested in array items have no form in the
-		// PRD 0023 grammar, which defines tags for top-level named slots only.
-		// This printer adopts the spec's own first-preference option (a):
-		// indexed member tags that mirror the prop path exactly, so the P2
-		// parser can rebuild the array losslessly. The item's non-slot fields
-		// stay in the `items` prop literal; only the node arrays move out.
+		// DOC-01 RESOLVED-1 / PRD 0023 grammar v1: slots nested in array
+		// items use indexed member tags that mirror the prop path. JSX member
+		// segments cannot start with a digit, so `i0` is the canonical encoding of array
+		// index 0. The P2 parser decodes it losslessly. The item's non-slot
+		// fields stay in the `items` prop literal; only node arrays move out.
 		if (field?.type === "array") {
 			const slotKeys = slotKeysOfArrayItems(field);
 			if (slotKeys.length > 0 && Array.isArray(value)) {
@@ -160,7 +164,7 @@ function renderNode(node: PuckNode, config: Config, depth: number): string {
 					for (const slotKey of slotKeys) {
 						slots.push(
 							slotTag(
-								`${node.type}.${key}.${index}.${slotKey}`,
+								`${node.type}.${key}.i${index}.${slotKey}`,
 								(Array.isArray(item[slotKey]) ? item[slotKey] : []).filter(
 									isNode,
 								),

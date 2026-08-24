@@ -17,6 +17,8 @@ export interface Diagnostic {
 	readonly line?: number;
 	readonly col?: number;
 	readonly severity: "error" | "warning";
+	/** Namespaced catalog key for the visual seam that owns the rejected edit. */
+	readonly hintKey?: string;
 }
 
 /** Text emitted from a document, tagged with the revision it came from. */

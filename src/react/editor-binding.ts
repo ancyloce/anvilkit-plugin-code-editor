@@ -15,6 +15,8 @@ import { toCodeMirrorDiagnostics } from "./diagnostics.js";
 export interface EditorBindingOptions {
 	readonly parent: HTMLElement;
 	readonly doc: string;
+	/** Accessible name for the contenteditable element with role=textbox. */
+	readonly ariaLabel: string;
 	/** Fired on every user edit (the controller decides when to validate). */
 	readonly onChange: (text: string) => void;
 	/** Fired when focus leaves the editor — a commit trigger (§8.5). */
@@ -37,9 +39,12 @@ export function createEditorBinding(
 		parent: options.parent,
 		state: EditorState.create({
 			doc: options.doc,
-			extensions: [
+				extensions: [
 				lineNumbers(),
 				lintGutter(),
+				EditorView.contentAttributes.of({
+					"aria-label": options.ariaLabel,
+				}),
 				// The JSON buffer is highlighted by the JavaScript grammar:
 				// `@codemirror/lang-javascript` is the D5-approved language
 				// package (it also carries the TSX grammar P1/P2 need), and

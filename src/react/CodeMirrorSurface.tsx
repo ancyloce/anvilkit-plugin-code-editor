@@ -9,8 +9,11 @@ import type { EditorBinding } from "./editor-binding.js";
 export interface CodeMirrorSurfaceProps {
 	readonly text: string;
 	readonly diagnostics: readonly Diagnostic[];
+	/** Accessible name applied to CodeMirror's contenteditable textbox. */
+	readonly ariaLabel: string;
 	readonly onChange: (text: string) => void;
 	readonly onBlur?: () => void;
+	readonly onLoadError?: (error: Error) => void;
 	readonly readOnly?: boolean;
 }
 
@@ -25,19 +28,27 @@ export interface CodeMirrorSurfaceProps {
 export function CodeMirrorSurface({
 	text,
 	diagnostics,
+	ariaLabel,
 	onChange,
 	onBlur,
+	onLoadError,
 	readOnly,
 }: CodeMirrorSurfaceProps): React.ReactElement {
 	const hostRef = React.useRef<HTMLDivElement | null>(null);
 	const bindingRef = React.useRef<EditorBinding | null>(null);
-	const [ready, setReady] = React.useState(false);
+	const [bindingVersion, setBindingVersion] = React.useState(0);
 
 	// Latest callbacks without re-creating the editor on every render.
 	const onChangeRef = React.useRef(onChange);
 	const onBlurRef = React.useRef(onBlur);
-	onChangeRef.current = onChange;
-	onBlurRef.current = onBlur;
+	const onLoadErrorRef = React.useRef(onLoadError);
+	const textRef = React.useRef(text);
+	React.useEffect(() => {
+		onChangeRef.current = onChange;
+		onBlurRef.current = onBlur;
+		onLoadErrorRef.current = onLoadError;
+		textRef.current = text;
+	}, [onBlur, onChange, onLoadError, text]);
 
 	React.useEffect(() => {
 		let cancelled = false;
@@ -48,12 +59,18 @@ export function CodeMirrorSurface({
 			if (cancelled) return;
 			bindingRef.current = createEditorBinding({
 				parent: host,
-				doc: text,
+				doc: textRef.current,
+				ariaLabel,
 				readOnly,
 				onChange: (next) => onChangeRef.current(next),
 				onBlur: () => onBlurRef.current?.(),
 			});
-			setReady(true);
+			setBindingVersion((version) => version + 1);
+		}).catch((error: unknown) => {
+			if (cancelled) return;
+			onLoadErrorRef.current?.(
+				error instanceof Error ? error : new Error(String(error)),
+			);
 		});
 
 		return () => {
@@ -61,16 +78,15 @@ export function CodeMirrorSurface({
 			bindingRef.current?.destroy();
 			bindingRef.current = null;
 		};
-		// Mount once: subsequent text arrives through the effects below.
-	}, []);
+	}, [ariaLabel, readOnly]);
 
 	React.useEffect(() => {
-		if (ready) bindingRef.current?.setText(text);
-	}, [ready, text]);
+		if (bindingVersion > 0) bindingRef.current?.setText(text);
+	}, [bindingVersion, text]);
 
 	React.useEffect(() => {
-		if (ready) bindingRef.current?.setDiagnostics(diagnostics);
-	}, [ready, diagnostics]);
+		if (bindingVersion > 0) bindingRef.current?.setDiagnostics(diagnostics);
+	}, [bindingVersion, diagnostics]);
 
 	return <div ref={hostRef} data-anvilkit-code-surface="" className="h-full" />;
 }

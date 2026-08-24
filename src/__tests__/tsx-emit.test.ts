@@ -234,10 +234,11 @@ describe("emitTsx — slots (design §8.4, PRD 0023 RESOLVED-3)", () => {
 		expect(text).toContain(
 			'items={[{"label":"Overview"},{"label":"Details"}]}',
 		);
-		// …and each nested slot becomes a tag mirroring the prop path exactly.
-		expect(text).toContain("<Tabs.items.0.content>");
-		expect(text).toContain("</Tabs.items.0.content>");
-		expect(text).toContain("<Tabs.items.1.content />");
+		// …and each nested slot becomes a tag mirroring the prop path. JSX
+		// identifiers cannot start with a digit, so `i0` encodes index 0.
+		expect(text).toContain("<Tabs.items.i0.content>");
+		expect(text).toContain("</Tabs.items.i0.content>");
+		expect(text).toContain("<Tabs.items.i1.content />");
 		// The node array itself never leaks into the prop literal.
 		expect(text).not.toContain('"content"');
 	});

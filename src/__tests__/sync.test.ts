@@ -117,6 +117,23 @@ describe("SyncController — states and transitions (P0-15)", () => {
 		expect(controller.snapshot().state).toBe("clean");
 	});
 
+	it("ignores synchronous store echoes from its own interim and commit", () => {
+		let controller: SyncController;
+		controller = new SyncController({
+			initial: docWith("start"),
+			validate,
+			ports: {
+				applyInterim: (data) => controller.externalChange(data),
+				commit: (data) => controller.externalChange(data),
+			},
+		});
+		controller.edit(emitJson(docWith("edited")).text);
+		controller.debounceElapsed();
+		expect(controller.snapshot().state).toBe("dirty");
+		expect(controller.commit()).toBe(true);
+		expect(controller.snapshot().state).toBe("clean");
+	});
+
 	it("a whole session of edits records exactly ONE commit", () => {
 		const { controller, interim, commits } = makeController();
 		for (const label of ["a", "ab", "abc", "abcd"]) {
@@ -151,6 +168,44 @@ describe("SyncController — states and transitions (P0-15)", () => {
 		expect(controller.snapshot().diagnostics).toHaveLength(0);
 		controller.commit();
 		expect(commits).toHaveLength(1);
+	});
+
+	it("reuses the debounced payload for the recording commit", () => {
+		let validations = 0;
+		const commits: Data[] = [];
+		const controller = new SyncController({
+			initial: docWith("start"),
+			validate: (text) => {
+				validations += 1;
+				return validate(text);
+			},
+			ports: {
+				applyInterim: () => undefined,
+				commit: (data) => commits.push(data),
+			},
+		});
+		controller.edit(emitJson(docWith("stable-id-session")).text);
+		controller.debounceElapsed();
+		controller.commit();
+		expect(validations).toBe(1);
+		expect(commits).toHaveLength(1);
+	});
+
+	it("uses a projection-specific emitter on mount and clean external changes", () => {
+		const emit = (data: Data) =>
+			`tsx:${String(data.content[0]?.props?.label ?? "")}`;
+		const controller = new SyncController({
+			initial: docWith("start"),
+			emit,
+			validate,
+			ports: {
+				applyInterim: () => undefined,
+				commit: () => undefined,
+			},
+		});
+		expect(controller.snapshot().text).toBe("tsx:start");
+		controller.externalChange(docWith("external"));
+		expect(controller.snapshot().text).toBe("tsx:external");
 	});
 });
 

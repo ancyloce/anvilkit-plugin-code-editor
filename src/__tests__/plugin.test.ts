@@ -20,21 +20,29 @@ function registerWith(
 	options: CodeEditorPluginOptions = {},
 ) {
 	const surfaces: string[] = [];
+	let renderSurface: (() => unknown) | undefined;
 	let messages = 0;
 	const unregister = vi.fn();
 	const ctx = {
 		registerMessages: () => {
 			messages += 1;
 		},
-		registerEditorSurface: (surface: { id: string }) => {
+		registerEditorSurface: (surface: { id: string; render: () => unknown }) => {
 			surfaces.push(surface.id);
+			renderSurface = surface.render;
 			return unregister;
 		},
 		...(withEditor ? { editor: {} } : {}),
 	} as unknown as StudioPluginContext;
 
 	const registration = createCodeEditorPlugin(options).register(ctx);
-	return { registration, surfaces, unregister, messageCount: () => messages };
+	return {
+		registration,
+		surfaces,
+		unregister,
+		messageCount: () => messages,
+		renderSurface: () => renderSurface?.(),
+	};
 }
 
 describe("createCodeEditorPlugin", () => {
@@ -48,6 +56,27 @@ describe("createCodeEditorPlugin", () => {
 		const { surfaces, messageCount } = registerWith(true);
 		expect(messageCount()).toBe(1);
 		expect(surfaces).toEqual([CODE_EDITOR_SURFACE_ID]);
+	});
+
+	it("keeps TSX write off by default and forwards explicit collaboration options", () => {
+		const defaults = registerWith(true).renderSurface() as {
+			props: Record<string, unknown>;
+		};
+		expect(defaults.props.tsxWrite).toBe(false);
+		expect(defaults.props.collaborationActive).toBe(false);
+
+		const optedIn = registerWith(true, {
+			tsxWrite: true,
+			collaborationActive: true,
+			sync: { mode: "live", debounceMs: 10, commitIdleMs: 20 },
+		}).renderSurface() as { props: Record<string, unknown> };
+		expect(optedIn.props.tsxWrite).toBe(true);
+		expect(optedIn.props.collaborationActive).toBe(true);
+		expect(optedIn.props.sync).toEqual({
+			mode: "live",
+			debounceMs: 10,
+			commitIdleMs: 20,
+		});
 	});
 
 	it("unregisters its surface on destroy", async () => {

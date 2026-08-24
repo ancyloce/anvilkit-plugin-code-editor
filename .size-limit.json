@@ -13,7 +13,22 @@
 			"@codemirror/view",
 			"@codemirror/lint",
 			"@codemirror/lang-javascript",
+			"@babel/parser",
+			"../projection/tsx-parse.js",
+			"../projection/merge.js",
 			"zod"
+		]
+	},
+	{
+		"name": "@anvilkit/plugin-code-editor TSX parser chunk (lazy)",
+		"path": "dist/projection/tsx-parse.js",
+		"limit": "100 KB",
+		"gzip": true,
+		"ignore": [
+			"react",
+			"react-dom",
+			"@puckeditor/core",
+			"@anvilkit/core"
 		]
 	},
 	{

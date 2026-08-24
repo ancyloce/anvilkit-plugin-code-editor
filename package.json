@@ -40,9 +40,10 @@
 		"check:publint": "publint",
 		"check:circular": "madge --circular --extensions ts,tsx src/",
 		"check:peer-deps": "node ./scripts/check-peer-deps.mjs",
-		"check:all": "pnpm check:publint && pnpm check:circular && pnpm check:peer-deps && pnpm check:bundle-budget",
+		"check:all": "pnpm check:publint && pnpm check:circular && pnpm check:peer-deps && pnpm check:round-trip && pnpm check:bundle-budget",
 		"size": "size-limit",
-		"check:bundle-budget": "size-limit"
+		"check:bundle-budget": "size-limit",
+		"check:round-trip": "vitest run src/__tests__/round-trip.property.test.ts"
 	},
 	"peerDependencies": {
 		"@puckeditor/core": "^0.23.0",
@@ -66,6 +67,7 @@
 	},
 	"dependencies": {
 		"@anvilkit/core": "workspace:*",
+		"@babel/parser": "^7.29.2",
 		"@codemirror/lang-javascript": "^6.2.4",
 		"@codemirror/lint": "^6.8.5",
 		"@codemirror/state": "^6.5.2",
@@ -85,6 +87,7 @@
 		"@types/node": "^26.2.0",
 		"@types/react": "^19.2.18",
 		"@types/react-dom": "19.2.4",
+		"fast-check": "^4.9.0",
 		"jsdom": "^30.0.1",
 		"madge": "^8.0.0",
 		"publint": "^0.3.23",

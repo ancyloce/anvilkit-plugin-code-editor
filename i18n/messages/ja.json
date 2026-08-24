@@ -1,6 +1,7 @@
 {
 	"codeEditor.toggle": "コード",
 	"codeEditor.panel.title": "コード",
+	"codeEditor.editor.loadFailed": "コードエディターを読み込めません。",
 	"codeEditor.panel.unavailable": "このマウントではビジュアルエディターが有効になっていません。",
 	"codeEditor.projection.json": "JSON",
 	"codeEditor.projection.tsx": "TSX",
@@ -8,5 +9,13 @@
 	"codeEditor.status.dirty": "未保存の変更",
 	"codeEditor.status.invalid": "ドキュメントが無効です",
 	"codeEditor.projection.label": "ビュー",
-	"codeEditor.projection.readOnly": "ドキュメントの読み取り専用ビュー"
+	"codeEditor.projection.readOnly": "ドキュメントの読み取り専用ビュー",
+	"codeEditor.projection.loading": "書き込み可能な TSX 文法を読み込んでいます…",
+	"codeEditor.sync.apply": "適用",
+	"codeEditor.collaboration.manual": "コラボレーションが有効です。変更は「適用」を選んだときだけ反映されます。",
+	"codeEditor.hint.fields": "この値はコンポーネントのフィールドパネルで編集してください。",
+	"codeEditor.hint.slots": "ネストした内容はコンポーネントで宣言されたスロットから編集してください。",
+	"codeEditor.hint.appearance": "見た目のスタイルは外観パネルで設定してください。",
+	"codeEditor.hint.interactions": "イベントの動作はインタラクションパネルで設定してください。",
+	"codeEditor.hint.bindings": "動的な値はバインディングパネルで設定してください。"
 }

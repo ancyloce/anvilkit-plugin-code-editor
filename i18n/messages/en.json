@@ -1,6 +1,7 @@
 {
 	"codeEditor.toggle": "Code",
 	"codeEditor.panel.title": "Code",
+	"codeEditor.editor.loadFailed": "Unable to load the code editor.",
 	"codeEditor.panel.unavailable": "The visual editor is not enabled for this mount.",
 	"codeEditor.projection.json": "JSON",
 	"codeEditor.projection.tsx": "TSX",
@@ -8,5 +9,13 @@
 	"codeEditor.status.dirty": "Unsaved edits",
 	"codeEditor.status.invalid": "Invalid document",
 	"codeEditor.projection.label": "Projection",
-	"codeEditor.projection.readOnly": "Read-only view of the document"
+	"codeEditor.projection.readOnly": "Read-only view of the document",
+	"codeEditor.projection.loading": "Loading the writable TSX grammar…",
+	"codeEditor.sync.apply": "Apply",
+	"codeEditor.collaboration.manual": "Collaboration is active. Changes apply only when you choose Apply.",
+	"codeEditor.hint.fields": "Edit this value in the component Fields panel.",
+	"codeEditor.hint.slots": "Edit nested content through the component's declared Slots.",
+	"codeEditor.hint.appearance": "Visual styling belongs in the Appearance panel.",
+	"codeEditor.hint.interactions": "Event behavior belongs in the Interactions panel.",
+	"codeEditor.hint.bindings": "Dynamic values belong in the Bindings panel."
 }

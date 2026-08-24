@@ -1,6 +1,7 @@
 {
 	"codeEditor.toggle": "代码",
 	"codeEditor.panel.title": "代码",
+	"codeEditor.editor.loadFailed": "无法加载代码编辑器。",
 	"codeEditor.panel.unavailable": "此挂载未启用可视化编辑器。",
 	"codeEditor.projection.json": "JSON",
 	"codeEditor.projection.tsx": "TSX",
@@ -8,5 +9,13 @@
 	"codeEditor.status.dirty": "有未保存的修改",
 	"codeEditor.status.invalid": "文档无效",
 	"codeEditor.projection.label": "视图",
-	"codeEditor.projection.readOnly": "文档的只读视图"
+	"codeEditor.projection.readOnly": "文档的只读视图",
+	"codeEditor.projection.loading": "正在加载可写 TSX 语法…",
+	"codeEditor.sync.apply": "应用",
+	"codeEditor.collaboration.manual": "协作已启用。只有选择“应用”时才会应用更改。",
+	"codeEditor.hint.fields": "请在组件的字段面板中编辑此值。",
+	"codeEditor.hint.slots": "请通过组件声明的插槽编辑嵌套内容。",
+	"codeEditor.hint.appearance": "视觉样式应在外观面板中设置。",
+	"codeEditor.hint.interactions": "事件行为应在交互面板中设置。",
+	"codeEditor.hint.bindings": "动态值应在绑定面板中设置。"
 }

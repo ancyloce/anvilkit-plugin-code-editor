@@ -41,6 +41,8 @@ export interface SyncSnapshot {
 export interface SyncControllerOptions {
 	/** The document at mount. */
 	readonly initial: Data;
+	/** Canonical text projection. JSON remains the default for P0 callers. */
+	readonly emit?: (data: Data) => string;
 	/** Parse + gate a buffer. The controller never validates by itself. */
 	readonly validate: (text: string) => ApplyResult<Data>;
 	readonly ports: CommitPorts;
@@ -62,6 +64,8 @@ export class SyncController {
 	#applied: Data;
 	#commitCount = 0;
 	#dirtySinceCommit = false;
+	/** Successful validation cached for this exact buffer revision. */
+	#validatedText: string | null = null;
 	/** Buffer text captured when an external change arrived mid-edit. */
 	#staleIncoming: Data | null = null;
 
@@ -69,7 +73,11 @@ export class SyncController {
 		this.#mode = options.mode ?? "live";
 		this.#applied = options.initial;
 		this.#pending = options.initial;
-		this.#text = emitJson(options.initial).text;
+		this.#text = this.#emit(options.initial);
+	}
+
+	#emit(data: Data): string {
+		return this.options.emit?.(data) ?? emitJson(data).text;
 	}
 
 	snapshot(): SyncSnapshot {
@@ -92,6 +100,7 @@ export class SyncController {
 
 	/** The user typed. Never validates — that waits for the debounce. */
 	edit(text: string): void {
+		if (text !== this.#text) this.#validatedText = null;
 		this.#text = text;
 		if (this.#state === "clean") this.#state = "dirty";
 		this.#dirtySinceCommit = true;
@@ -113,10 +122,20 @@ export class SyncController {
 		this.#diagnostics = [];
 		const next = completeSnapshot(result.value);
 		this.#pending = next;
+		this.#validatedText = this.#text;
 		if (isEquivalent(next, this.#applied)) return; // ok + noop
 		if (this.#mode === "live") {
-			this.options.ports.applyInterim(next);
+			// Puck subscriptions may fire synchronously from dispatch. Mark the
+			// payload as ours before crossing that boundary so the echo is not
+			// misclassified as a remote change while this buffer is dirty.
+			const previousApplied = this.#applied;
 			this.#applied = next;
+			try {
+				this.options.ports.applyInterim(next);
+			} catch (error) {
+				this.#applied = previousApplied;
+				throw error;
+			}
 		}
 	}
 
@@ -128,19 +147,35 @@ export class SyncController {
 	commit(): boolean {
 		if (this.#state === "stale") return false;
 		if (!this.#dirtySinceCommit) return false;
-		const result = this.options.validate(this.#text);
-		if (!result.ok) {
-			this.#diagnostics = result.diagnostics;
-			return false;
+		let next = this.#pending;
+		if (this.#validatedText !== this.#text) {
+			const result = this.options.validate(this.#text);
+			if (!result.ok) {
+				this.#diagnostics = result.diagnostics;
+				return false;
+			}
+			this.#diagnostics = [];
+			next = completeSnapshot(result.value);
+			this.#pending = next;
+			this.#validatedText = this.#text;
 		}
-		this.#diagnostics = [];
-		const next = completeSnapshot(result.value);
-		this.options.ports.commit(next);
+		// As with interim dispatch, a store subscriber can echo the commit
+		// before the port returns. Publish the clean/applied state first and
+		// roll it back if the host rejects the dispatch.
+		const previousApplied = this.#applied;
 		this.#applied = next;
 		this.#pending = next;
-		this.#commitCount += 1;
 		this.#dirtySinceCommit = false;
 		this.#state = "clean";
+		try {
+			this.options.ports.commit(next);
+		} catch (error) {
+			this.#applied = previousApplied;
+			this.#dirtySinceCommit = true;
+			this.#state = "dirty";
+			throw error;
+		}
+		this.#commitCount += 1;
 		return true;
 	}
 
@@ -150,10 +185,12 @@ export class SyncController {
 	 * clobber either side.
 	 */
 	externalChange(data: Data): void {
+		if (isEquivalent(data, this.#applied)) return;
 		if (this.#state === "clean") {
 			this.#applied = data;
 			this.#pending = data;
-			this.#text = emitJson(data).text;
+			this.#text = this.#emit(data);
+			this.#validatedText = null;
 			return;
 		}
 		this.#staleIncoming = data;
@@ -167,8 +204,9 @@ export class SyncController {
 		this.#staleIncoming = null;
 		this.#applied = incoming;
 		this.#pending = incoming;
-		this.#text = emitJson(incoming).text;
+		this.#text = this.#emit(incoming);
 		this.#diagnostics = [];
+		this.#validatedText = null;
 		this.#state = "clean";
 		this.#dirtySinceCommit = false;
 	}

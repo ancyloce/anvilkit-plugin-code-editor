@@ -1,6 +1,6 @@
 export {
-	type DeriveOptions,
 	type DerivedSchemas,
+	type DeriveOptions,
 	deriveSchemas,
 	findForbiddenKeys,
 	type GateResult,
@@ -23,13 +23,6 @@ export {
 	type CodeEditorPluginOptions,
 	createCodeEditorPlugin,
 } from "./plugin.js";
-export {
-	CodePanel,
-	type CodePanelProps,
-	type PuckApiLike,
-} from "./react/CodePanel.js";
-export { CodeMirrorSurface } from "./react/CodeMirrorSurface.js";
-export { toCodeMirrorDiagnostics } from "./react/diagnostics.js";
 export { emitJson, isEquivalent, parseJson } from "./projection/json.js";
 export { emitTsx } from "./projection/tsx-emit.js";
 export type {
@@ -38,6 +31,13 @@ export type {
 	EmitResult,
 	ProjectionKind,
 } from "./projection/types.js";
+export { CodeMirrorSurface } from "./react/CodeMirrorSurface.js";
+export {
+	CodePanel,
+	type CodePanelProps,
+	type PuckApiLike,
+} from "./react/CodePanel.js";
+export { toCodeMirrorDiagnostics } from "./react/diagnostics.js";
 export {
 	type CommitPorts,
 	completeSnapshot,

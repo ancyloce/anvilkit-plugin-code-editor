@@ -24,6 +24,19 @@ export interface CodeEditorPluginOptions {
 	 * behind the P2 `tsxWrite` flag.
 	 */
 	readonly projections?: readonly ("json" | "tsx")[];
+	/** Enable constrained TSX writes. Default false preserves P1. */
+	readonly tsxWrite?: boolean;
+	/**
+	 * Set by hosts whose plugin roster contains an active collaboration
+	 * adapter. This forces manual apply and overrides `sync.mode`.
+	 */
+	readonly collaborationActive?: boolean;
+	/** Optional sync cadence; defaults to live, 200 ms / 1.5 s. */
+	readonly sync?: {
+		readonly mode?: "live" | "manual";
+		readonly debounceMs?: number;
+		readonly commitIdleMs?: number;
+	};
 	/** Open the panel at mount. Default false — see FR-C10. */
 	readonly initiallyOpen?: boolean;
 	/**
@@ -79,16 +92,20 @@ export function createCodeEditorPlugin(
 					// `getPuckApi` is the plugin context's public seam (the
 					// same one `plugin-ai-copilot` commits through); the panel
 					// never reaches into core internals.
-					render: () =>
+						render: () =>
 						createElement(CodePanel, {
 							getPuckApi: () =>
 								ctx.getPuckApi() as unknown as PuckApiLike | null,
+							readData: () => ctx.getData(),
 							// The plugin API nests the canonical EditorApi one
 							// level down (`ctx.editor.editor`).
 							subscribe: (listener: () => void) =>
 								ctx.editor?.editor.subscribe(listener) ?? (() => undefined),
 							visibility,
 							projections: options.projections,
+							tsxWrite: options.tsxWrite ?? false,
+							collaborationActive: options.collaborationActive ?? false,
+							sync: options.sync,
 						}),
 				});
 			}

@@ -221,6 +221,11 @@ describe("jsonSchema (DOC-02 §7.2 prompt payload)", () => {
 		expect(round).toEqual(schemas.jsonSchema);
 	});
 
+	it("references reused child unions instead of expanding every nesting path", () => {
+		expect(schemas.jsonSchema).toHaveProperty("$defs");
+		expect(JSON.stringify(schemas.jsonSchema)).toContain('"$ref"');
+	});
+
 	it("names every registered component", () => {
 		const text = JSON.stringify(schemas.jsonSchema);
 		for (const type of schemas.componentTypes) {

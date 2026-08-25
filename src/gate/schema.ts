@@ -214,8 +214,11 @@ export function deriveSchemas(
 		jsonSchema: z.toJSONSchema(documentOf(embed), {
 			// The union members are structurally distinct per component, and
 			// `io: "input"` keeps the schema describing what a model must
-			// PRODUCE rather than what zod outputs.
+			// PRODUCE rather than what zod outputs. Each unrolled level is shared
+			// by every slot-bearing variant; refs preserve that exact depth-bound
+			// contract without inlining the child union combinatorially.
 			io: "input",
+			reused: "ref",
 			unrepresentable: "any",
 		}) as Record<string, unknown>,
 	};
